@@ -1,0 +1,77 @@
+---
+# tasks file for vsftp
+
+- name: Install vsftpd and dependences
+  yum:
+    name: '{{ vsftpd_packages }}' 
+    state: present
+
+- name: Allow full read/write access through SELinux
+  seboolean:
+    name: ftpd_full_access
+    state: yes
+    persistent: yes
+
+- name: Allow anon read/write access through SELinux
+  seboolean:
+    name: ftpd_anon_write
+    state: yes
+    persistent: yes
+
+- name: Ensure anonimus root-dir exists
+  file:
+    path: /var/ftp/pub
+    state: directory
+    owner: ftp
+    group: ftp
+    mode: 0555
+    setype: public_content_t
+    seuser: system_u
+
+- name: Ensure anonim upload dir exists
+  file:
+    path: /var/ftp/pub/upload
+    state: directory
+    owner: ftp
+    group: ftp
+    mode: 0755
+    setype: public_content_rw_t
+    seuser: system_u
+ 
+# OPEN PORTS
+- name: open port 20
+  firewalld:
+    port: "20/tcp"
+    permanent: true
+    state: enabled
+    immediate: true
+
+- name: open port 21
+  firewalld:
+    port: "21/tcp"
+    permanent: true
+    state: enabled
+    immediate: true
+
+- name: open port 10100-10111
+  firewalld:
+    port: "10100-10111/tcp"
+    permanent: true
+    state: enabled
+    immediate: true
+
+- name: Add configuration file
+  template:
+    src: vsftpd.conf.j2
+    dest: /etc/vsftpd/vsftpd.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart vsftpd
+
+- name: Ensure service is started
+  service:
+    name: vsftpd
+    state: started
+    enabled: true
+ 

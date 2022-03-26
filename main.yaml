@@ -1,0 +1,33 @@
+---
+- name: play with roles
+  hosts: epam
+  become: false
+
+  pre_tasks:
+    - name: using roles
+      debug:
+        msg: "roles start"
+  roles:
+    - role: apache
+      become: true
+      tags: apache
+    - role: vsftp
+      become: true
+      tags: vs
+            
+  post_tasks:
+    
+    # - name: check web site from control server
+    #   uri:
+    #     url: "http://{{ inventory_hostname }}"
+    #     return_content: true
+    #     validate_certs: false
+    #     #connection: local
+    #   register: example_webpage_out
+    #   failed_when: example_webpage_out.status != 200
+    
+    - name: tasks were done
+      debug:
+        msg: " tasks were done"
+    
+    

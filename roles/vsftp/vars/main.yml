@@ -1,0 +1,11 @@
+---
+# vars file for vsftp
+
+vsftpd_packages:
+  - vsftpd
+  - libsemanage-python
+
+  # - libselinux-python
+
+
+vsftpd_service: vsftpd

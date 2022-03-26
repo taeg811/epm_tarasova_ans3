@@ -1,0 +1,4 @@
+---
+# vars file for apache
+tls_port: 443
+no_tls_port: 80
